@@ -14,7 +14,7 @@ class Address extends Model
     protected $table = 'addresses';
 
     protected $fillable =[
-        'loaction'
+        'location'
     ];
 
     public function contact()
