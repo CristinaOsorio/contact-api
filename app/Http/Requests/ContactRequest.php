@@ -29,11 +29,11 @@ class ContactRequest extends FormRequest
             'birthday' => 'nullable|date',
             'company' => 'nullable|string|max:255',
             'website' => 'nullable|url',
-            'phoneNumbers' => 'required|array',
+            'phoneNumbers' => 'array',
             'phoneNumbers.*.number' => 'required|string',
-            'emails' => 'required|array',
+            'emails' => 'array',
             'emails.*.address' => 'required|email',
-            'addresses' => 'required|array',
+            'addresses' => 'array',
             'addresses.*.location' => 'required|string',
         ];
     }
