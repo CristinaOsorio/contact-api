@@ -58,7 +58,7 @@ class ContactController extends Controller
 
         $contact = $this->contactService->storeContactWithDetails($request);
 
-        return response()->json(['data' => $contact], 201);
+        return response()->json($contact, 201);
     }
 
     public function update($id, ContactRequest $request)
@@ -66,9 +66,7 @@ class ContactController extends Controller
          try {
             $validatedData = $request->validated();
             $contact = $this->contactService->updateContactWithDetails($id, $request);
-            return response()->json([
-                'data' => $contact,
-            ], 200);
+            return response()->json( $contact, 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()

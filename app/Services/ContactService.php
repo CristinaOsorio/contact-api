@@ -11,7 +11,7 @@ class ContactService
 
     public function getAllContacts($perPage = 10)
     {
-        return Contact::with(['phoneNumbers', 'emails', 'addresses'])->paginate($perPage);
+        return Contact::with(['phoneNumbers', 'emails', 'addresses']) ->orderBy('created_at', 'desc') ->paginate($perPage);
     }
 
     public function getContactById($id)
