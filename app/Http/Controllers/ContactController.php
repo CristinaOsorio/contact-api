@@ -34,8 +34,28 @@ class ContactController extends Controller
             ]);
     }
 
+    public function show($id)
+    {
+        try {
+            $contact = $this->contactService->getContactById($id);
+
+            if (!$contact) {
+                return response()->json([
+                    'data' => $contact
+                ], 404);
+            }
+
+            return response()->json($contact, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo obtener el contacto: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(ContactRequest $request)
     {
+
         $contact = $this->contactService->storeContactWithDetails($request);
 
         return response()->json(['data' => $contact], 201);
@@ -43,10 +63,17 @@ class ContactController extends Controller
 
     public function update($id, ContactRequest $request)
     {
+         try {
+            $validatedData = $request->validated();
             $contact = $this->contactService->updateContactWithDetails($id, $request);
             return response()->json([
                 'data' => $contact,
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy($id)

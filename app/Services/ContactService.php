@@ -14,6 +14,17 @@ class ContactService
         return Contact::with(['phoneNumbers', 'emails', 'addresses'])->paginate($perPage);
     }
 
+    public function getContactById($id)
+    {
+        $contact = Contact::with(['phoneNumbers', 'emails', 'addresses'])->find($id);
+
+        if (!$contact) {
+            throw new ModelNotFoundException("Contacto no encontrado");
+        }
+
+        return $contact;
+    }
+
 
     public function storeContactWithDetails($requestData)
     {
@@ -35,7 +46,7 @@ class ContactService
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new ValidationException($e->getMessage());
+            throw new ModelNotFoundException($e->getMessage());
         }
     }
 
@@ -60,10 +71,12 @@ class ContactService
             DB::commit();
 
             return $contact->load('phoneNumbers', 'emails', 'addresses');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw new ValidationException($e->getMessage());
-        }
+        
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e->getMessage();
+            }
+            
     }
 
     public function deleteContact($id)
