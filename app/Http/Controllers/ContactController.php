@@ -36,9 +36,31 @@ class ContactController extends Controller
 
     public function store(ContactRequest $request)
     {
-
         $contact = $this->contactService->storeContactWithDetails($request);
 
         return response()->json(['data' => $contact], 201);
+    }
+
+    public function update($id, ContactRequest $request)
+    {
+            $contact = $this->contactService->updateContactWithDetails($id, $request);
+            return response()->json([
+                'data' => $contact,
+            ], 200);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $this->contactService->deleteContact($id);
+
+            return response()->json([
+                'message' => 'Contacto eliminado con éxito'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo eliminar el contacto: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Contact;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ContactService
 {
@@ -36,6 +37,46 @@ class ContactService
             DB::rollBack();
             throw new ValidationException($e->getMessage());
         }
+    }
+
+    public function updateContactWithDetails($contactId, $requestData)
+    {
+        DB::beginTransaction();
+
+        try {
+            $contact = Contact::findOrFail($contactId);
+            
+            $contact->update($requestData->only(['name', 'notes', 'birthday', 'company', 'website']));
+
+            $contact->phoneNumbers()->delete();
+            $this->savePhoneNumbers($contact, $requestData->phoneNumbers);
+
+            $contact->emails()->delete();
+            $this->saveEmails($contact, $requestData->emails);
+
+            $contact->addresses()->delete();
+            $this->saveAddresses($contact, $requestData->addresses);
+
+            DB::commit();
+
+            return $contact->load('phoneNumbers', 'emails', 'addresses');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new ValidationException($e->getMessage());
+        }
+    }
+
+    public function deleteContact($id)
+    {   
+        DB::transaction(function () use ($id) {
+            $contact = Contact::with(['phoneNumbers', 'emails', 'addresses'])->findOrFail($id);
+
+            $contact->phoneNumbers()->delete();
+            $contact->emails()->delete();
+            $contact->addresses()->delete();
+
+            $contact->delete();
+        });
     }
 
     private function savePhoneNumbers(Contact $contact, array $phoneNumbers)
