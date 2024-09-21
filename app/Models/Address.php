@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Contact;
+
 class Address extends Model
 {
     use HasFactory;
@@ -14,4 +16,9 @@ class Address extends Model
     protected $fillable =[
         'loaction'
     ];
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
 }
